@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getGoogleUserProfile } from "../utils/api";
+import { getGoogleUserProfile, getId } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
@@ -72,8 +72,22 @@ export default function Dashboard() {
     return null;
   }
 
-  const chat = () => {
-    navigate("/users");
+  const chat = async () => {
+    try {
+      const response = await getId(user.email);
+      console.log("getId response:", response);
+      
+      if (response && response.success) {
+        localStorage.setItem("myUserId", response.data[0].id);
+        console.log("My user ID set:", response.data[0].id);
+        navigate(`/users`);
+      } else {
+        console.error("Failed to get user ID:", response?.message);
+      }
+      
+    } catch (error) {
+      console.error("Error getting user ID:", error);
+    }
   }
   const logout = () => {
     localStorage.removeItem("token");

@@ -104,3 +104,83 @@ export async function getAllUsers() {
     return null;
   }
 }
+
+//----------Store Messages-------------
+
+export async function storeMessage(message, time, senderId, receiverId) {
+  
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${BACKEND_URL}/students/messages`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+         Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        message,
+        time,
+        senderId,
+        receiverId
+      }),
+    });
+    
+    const data = await response.json();
+
+    if (data.success) {
+      console.log("Message stored successfully:", data);
+      return data;
+    }
+    else {
+      throw new Error(data.message || "Failed to store message");
+    }
+  } catch (error) {
+    console.error("Error storing message:", error);
+    throw error;
+  }
+}
+
+//-----------Get Messages between two users--------------
+
+export async function getMessages(myId, targetId) {
+  const token = localStorage.getItem("token");
+  
+  try {
+
+    const response = await fetch(`${BACKEND_URL}/students/messages?myId=${myId}&targetId=${targetId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    return null;
+  }
+}
+
+//-----------Get ID --------------
+
+export async function getId(email) {
+  const token = localStorage.getItem("token");
+  
+  try {
+
+    const response = await fetch(`${BACKEND_URL}/students/getId?email=${email}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    return null;
+  }
+}

@@ -34,17 +34,12 @@ export default function UserList() {
     loadUsers();
   }, [navigate]);
 
-  const handleUserClick = (userId) => {    
-
-    navigate('/chat');
-
-    setTimeout(() => {
-      const event = new CustomEvent("sendTargetId", {
-        detail: userId,
-        bubbles: true
-      });
-      window.dispatchEvent(event);
-    }, 100);
+  const handleUserClick = (userId) => {
+    // Store targetUserId in localStorage
+    localStorage.setItem("targetUserId", userId);
+    
+    const myId = localStorage.getItem("myUserId");
+    navigate(`/chat?myId=${myId}&targetId=${userId}`);
   };
 
   const getInitials = (name) => {
